@@ -33,12 +33,13 @@ const userSchema = new mongoose.Schema({
             }
         }
     },
-    age: {
-        type: Number,
-        default: 0,
+    accType: {
+        type: String,
+        default: 'customer',
         validate(value) {
-            if (value < 0) {
-                throw new Error('Age must be a postive number')
+            if(!(value === "customer" || value === "admin")) {console.log(value)}
+            if (!(value === "customer" || value === "admin")) {
+                throw new Error('account Type must be Admin or Customer' + value)
             }
         }
     },

@@ -24,7 +24,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(express.json());
 app.use(userRouter);
-//app.use(productRouter);
+app.use(productRouter);
 
 
 app.listen(port, () => {
