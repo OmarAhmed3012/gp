@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: 'customer',
         validate(value) {
-            if(!(value === "customer" || value === "admin")) {console.log(value)}
+            
             if (!(value === "customer" || value === "admin")) {
                 throw new Error('account Type must be Admin or Customer' + value)
             }

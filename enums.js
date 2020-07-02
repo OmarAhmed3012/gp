@@ -1,7 +1,7 @@
 const Colors = {
     Black: "Black",
     Brown: "Brown",
-    Red: "Red111",
+    Red: "Red",
     Blue: "Blue",
     Green: "Green",
     White: "White",
@@ -13,6 +13,6 @@ const Colors = {
     Multicolor: "Multicolor"
 };
 
-Object.freeze(Colors);
+
 
 module.exports = Colors
