@@ -1,4 +1,5 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+
 
 const productSchema = new mongoose.Schema({
     name: {
@@ -15,10 +16,60 @@ const productSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    /*category: {
+        type: Enumerator,
+        required: true,
+
+    }*/
+
+    color: {
+        type: String,
+        required: true/*,
+        validate(value) {
+            if(!(value )) {console.log(value)}
+            if (!(value )) {
+                throw new Error('the width must be a positive number' + value)
+            }*/
+    },
+
+    width: {
+        type: Number,
+        required: true,
+        validate(value) {
+            if(!(value > 0 )) {console.log(value)}
+            if (!(value > 0)) {
+                throw new Error('the width must be a positive number' + value)
+            }
+    }},
+    height: {
+        type: Number,
+        required: true,
+        validate(value) {
+            if(!(value > 0 )) {console.log(value)}
+            if (!(value > 0)) {
+                throw new Error('the height must be a positive number' + value)
+            }
+    }},
+
+    depth: {
+        type: Number,
+        required: true,
+        validate(value) {
+            if(!(value > 0 )) {console.log(value)}
+            if (!(value > 0)) {
+                throw new Error('the depth must be a positive number' + value)
+            }
+    }}
+    
+    /*,
     owner: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: 'User'
+    }*/
+    ,
+    image: {
+        type: Buffer
     }
 }, {
     timestamps: true

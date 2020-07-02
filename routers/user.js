@@ -57,6 +57,26 @@ router.get('/users/me', auth, async (req, res) => {
     res.send(req.user)
 })
 
+//Switch account Type
+router.patch('/users/:id', auth, async (req, res) => {
+    if(req.user.accType === 'admin') {
+        const user = await User.findOne({ _id: req.params.id })
+        if(user.accType === 'customer'){
+            user.accType = 'admin';
+        } else {
+            user.accType = 'customer';
+        }
+        try {
+            await user.save()
+            res.send(user)
+        } catch (e) {
+            res.status(400).send(e)
+        }
+    } else {
+        res.status(401).send({ error: 'Please authenticate as Admin.' })
+    }
+})
+
 router.patch('/users/me', auth, async (req, res) => {
     const updates = Object.keys(req.body)
     const allowedUpdates = ['name', 'email', 'password']

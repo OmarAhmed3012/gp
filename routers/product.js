@@ -1,14 +1,14 @@
 const express = require('express')
 const Product = require('../models/product')
 const auth = require('../middleware/auth')
+const multer = require('multer')
+const sharp = require('sharp')
 const router = new express.Router()
 
-router.post('/products', auth, async (req, res) => {
-    console.log("hi from /products" + req.user.accType)
-    if(req.user.accType === 'admin'){
+router.post('/products', async (req, res) => {
+    
     const product = new Product({
-        ...req.body,
-        owner: req.user._id
+        ...req.body
     })
 
     try {
@@ -16,16 +16,13 @@ router.post('/products', auth, async (req, res) => {
         res.status(201).send(product)
     } catch (e) {
         res.status(400).send(e)
-    } }
-    else {
-        res.status(401).send({ error: 'Please authenticate.' })
-    }
+    } 
 })
-
+/*
 // GET /products?completed=true
 // GET /products?limit=10&skip=20
 // GET /products?sortBy=createdAt:desc
-router.get('/products', auth, async (req, res) => {
+router.get('/products', async (req, res) => {
     const match = {}
     const sort = {}
 
@@ -52,9 +49,29 @@ router.get('/products', auth, async (req, res) => {
     } catch (e) {
         res.status(500).send()
     }
+})*/
+
+
+
+router.get('/products', async (req, res) => {
+   // const _id = req.params.id
+
+    try {
+        const products = await Product.find();
+
+        if (!products) {
+            return res.status(404).send()
+        }
+
+        res.send(products)
+    } catch (e) {
+        res.status(500).send()
+    }
 })
 
-router.get('/products/:id', auth, async (req, res) => {
+
+
+router.get('/products/:id', async (req, res) => {
     const _id = req.params.id
 
     try {
@@ -70,7 +87,7 @@ router.get('/products/:id', auth, async (req, res) => {
     }
 })
 
-router.patch('/products/:id', auth, async (req, res) => {
+router.patch('/products/:id', async (req, res) => {
     const updates = Object.keys(req.body)
     const allowedUpdates = ['name', 'description', 'price', 'category', 'image', 'color', 'width', 'height', 'depth']
     const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
@@ -94,7 +111,7 @@ router.patch('/products/:id', auth, async (req, res) => {
     }
 })
 
-router.delete('/products/:id', auth, async (req, res) => {
+router.delete('/products/:id', async (req, res) => {
     try {
         const product = await Product.findOneAndDelete({ _id: req.params.id })
 
@@ -105,6 +122,52 @@ router.delete('/products/:id', auth, async (req, res) => {
         res.send(product)
     } catch (e) {
         res.status(500).send()
+    }
+})
+
+
+const upload = multer({
+    limits: {
+        fileSize: 1000000
+    },
+    fileFilter(req, file, cb) {
+        if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+            return cb(new Error('Please upload an image'))
+        }
+
+        cb(undefined, true)
+    }
+})
+
+router.post('/products/:id/image', upload.single('image'), async (req, res) => {
+    const buffer = await sharp(req.file.buffer).resize({ width: 250, height: 250 }).png().toBuffer()
+    const product = await Product.findOne({ _id: req.params.id })
+    product.image = buffer
+    await product.save()
+    res.send()
+}, (error, req, res, next) => {
+    res.status(400).send({ error: error.message })
+})
+
+router.delete('/products/:id/image', async (req, res) => {
+    const product = await Product.findOne({ _id: req.params.id })
+    product.image = undefined
+    await product.save()
+    res.send()
+})
+
+router.get('/products/:id/image', async (req, res) => {
+    try {
+        const product = await Product.findById(req.params.id)
+
+        if (!product || !product.image) {
+            throw new Error()
+        }
+
+        res.set('Content-Type', 'image/png')
+        res.send(product.image)
+    } catch (e) {
+        res.status(404).send()
     }
 })
 
