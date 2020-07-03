@@ -2,6 +2,7 @@ const express = require('express');
 const userRouter = require('./routers/user');
 const mongo = require('./db/mongoose');
 const productRouter = require('./routers/product');
+const categoryRouter = require('./routers/category')
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -25,6 +26,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(userRouter);
 app.use(productRouter);
+app.use(categoryRouter);
 
 
 app.listen(port, () => {

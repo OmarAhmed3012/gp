@@ -16,11 +16,6 @@ const productSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
-    /*category: {
-        type: Enumerator,
-        required: true,
-
-    }*/
 
     color: {
         type: String,
@@ -59,7 +54,12 @@ const productSchema = new mongoose.Schema({
             if (!(value > 0)) {
                 throw new Error('the depth must be a positive number' + value)
             }
-    }}
+    }},
+    categoryId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'Category'
+    }
     
     /*,
     owner: {

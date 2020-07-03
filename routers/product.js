@@ -5,10 +5,11 @@ const multer = require('multer')
 const sharp = require('sharp')
 const router = new express.Router()
 
-router.post('/products', async (req, res) => {
+router.post('/products/:id', async (req, res) => {
     
     const product = new Product({
-        ...req.body
+        ...req.body,
+        categoryId: req.params.id
     })
 
     try {
@@ -86,6 +87,25 @@ router.get('/products/:id', async (req, res) => {
         res.status(500).send()
     }
 })
+
+//Get Products in the Category
+
+router.get('/products/:id', async (req, res) => {
+    const _id = req.params.id
+
+    try {
+        const products = await Product.find({  categoryId: _id })
+
+        if (!products) {
+            return res.status(404).send()
+        }
+
+        res.send(products)
+    } catch (e) {
+        res.status(500).send()
+    }
+})
+
 
 router.patch('/products/:id', async (req, res) => {
     const updates = Object.keys(req.body)
