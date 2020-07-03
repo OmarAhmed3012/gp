@@ -90,11 +90,13 @@ router.get('/products/:id', async (req, res) => {
 
 //Get Products in the Category
 
-router.get('/products/:id', async (req, res) => {
+router.get('/productscat/:id', async (req, res) => {
     const _id = req.params.id
+    console.log(req.params.id)
 
     try {
-        const products = await Product.find({  categoryId: _id })
+        
+        const products = await Product.find({ categoryId: req.params.id })
 
         if (!products) {
             return res.status(404).send()
